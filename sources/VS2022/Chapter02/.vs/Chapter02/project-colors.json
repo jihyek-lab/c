@@ -1,0 +1,46 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "a9228460-f101-4451-a5f8-ee99ac2cc3c8": {
+      "ProjectGuid": "a9228460-f101-4451-a5f8-ee99ac2cc3c8",
+      "DisplayName": "Project6(error1)",
+      "ColorIndex": 0
+    },
+    "00369af0-f0fa-4943-bfb2-f892a62885e0": {
+      "ProjectGuid": "00369af0-f0fa-4943-bfb2-f892a62885e0",
+      "DisplayName": "Project11(debugged)",
+      "ColorIndex": 1
+    },
+    "36d29b8c-1333-4709-820f-6c97d14c409c": {
+      "ProjectGuid": "36d29b8c-1333-4709-820f-6c97d14c409c",
+      "DisplayName": "Project10(bug)",
+      "ColorIndex": 2
+    },
+    "77585ae5-44c1-48c1-865d-a5645554c14e": {
+      "ProjectGuid": "77585ae5-44c1-48c1-865d-a5645554c14e",
+      "DisplayName": "Project9(error4)",
+      "ColorIndex": 3
+    },
+    "226e6c84-10d5-4c98-aba4-51cd4df8dad0": {
+      "ProjectGuid": "226e6c84-10d5-4c98-aba4-51cd4df8dad0",
+      "DisplayName": "Project8(error3)",
+      "ColorIndex": 4
+    },
+    "a17aedc3-2534-48b7-a101-708debdadf91": {
+      "ProjectGuid": "a17aedc3-2534-48b7-a101-708debdadf91",
+      "DisplayName": "Project7(error2)",
+      "ColorIndex": 5
+    },
+    "933d37c3-8eb1-4d60-b96e-f5f5a8ecce1d": {
+      "ProjectGuid": "933d37c3-8eb1-4d60-b96e-f5f5a8ecce1d",
+      "DisplayName": "Project1(hello)",
+      "ColorIndex": 6
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "기타 파일",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 7
+}
