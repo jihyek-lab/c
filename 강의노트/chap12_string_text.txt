@@ -1,0 +1,215 @@
+제12장문자와문자열C언어EXPRESS(개정4판)
+
+이번장에서학습할내용• 문자표현방법•문자열표현방법•문자열이란무엇인가?• 문자열의입출력•문자처리라이브러리함수•표준입출력라이브러리함수인간은문자를사용하여정보를표현하므로문자열은프로그램에서중요한위치를차지하고있다. 이번장에서는C에서의문자열처리방법에대하여자세히살펴볼것이다. 
+
+문자의중요성l인간에게텍스트는대단히중요하다. 
+
+문자와문자열
+
+문자열표현방법l문자열(string): 문자들이여러개모인것l"A＂l"Hello World!"l"변수score의값은%d입니다“l문자열변수l변경가능한문자열을저장할수있는변수l어디에저장하면좋은가?
+하나의문자는char형변수로저장
+문자열은 char형배열로저장HELLo
+\0H
+NULL 문자lNULL 문자: 문자열의끝을나타낸다. 
+? ?
+
+왜문자열의끝을표시하여야하는가?l문자열은어디서종료되는지알수가없으므로표시를해주어야한다.
+str[0]  str[1] str[2]  str[3]  str[4] str[5]  str[6]  str[7]  str[8]  str[9]? ???seou
+#l
+%
+?
+&
+$쓰레기값“seou”,“seoul”,“seoul#”,“seoul#%”,....???
+
+예제#1#include<stdio.h>intmain(void){ inti;charstr[4];str[0] = 'a';str[1] = 'b';str[2] = 'c';str[3] = '\0';i = 0;while(str[i] != '\0'){printf("%c", str[i]);  i++;}return0;}문자배열에들어있는문자들을하나씩출력하여보자. 문자배열에저장된문자열을출력할때는%s를사용하면되지만여기서는문자열처리의기본적인방법을실감하기위하여문자배열에들어있는문자들을하나씩화면에출력하다가NULL 문자가나오면반복을종료하도록하였다. 
+abc
+참고 
+
+문자배열의초기화lchar str[4] = { 'a', 'b', 'c', '\0' };lchar str[4] = "abc“; lchar str[4] = "abcdef";lchar str[6] = "abc";lchar str[4] = ""; lchar str[] = "abc";
+
+abc문자열의출력
+charstr[] = “abc”;printf(“%s”, str);charstr[] = “abc”;printf(str);
+abc
+str3str1str2예제#2#include <stdio.h>int main(void){    char str1[6] = "Seoul";    char str2[3] = { 'i', 's' , '\0' };    char str3[] = "the capital city of Korea.";    printf("%s %s %s\n", str1, str2, str3);    return 0;}
+str2[0]  str2[1] str2[2]is
+str1[0]  str1[1] str1[2]  str1[3]  str1[4] str1[5]Seou
+\0l
+str3[ ]   str3[ ] str3[ ]   str3[ ]   . . . .     str3[ ]   str3[ ]  str3[ ]   str3[ ]  str3[ ]   str3[ ]theKorea....
+\0
+\0‘ ’
+Seoul is the capital city of Korea.
+예제 #3#include <stdio.h>int main(void){ char src[] = "Action speaks louder than words"; char dst[100]; int i; printf("원본문자열=%s\n", src);for(i = 0; src[i] != '\0'; i++)  dst[i] = src[i]; dst[i] = '\0'; printf("복사된문자열=%s\n", dst); return 0;}NULL과‘\0’은같다.
+원본문자열=Action speaks louder than words복사된문자열=Action speaks louder than words
+문자열길이계산예제// 문자열의길이를구하는프로그램#include <stdio.h>int main(void){ char str[30] = "C language is easy"; int i = 0;  while(str[i] != 0)  i++; printf("문자열\"%s\"의길이는%d입니다.\n", str, i); return 0;}
+문자열"Clanguageiseasy"의길이는18입니다.
+char str[10]=“Hello”;strcpy(str, "World"); char str[10]=“Hello”;str[0] = 'W';str[1] = 'o';str[2] = 'r';str[3] = 'l';str[4] = 'd';str[5] = '\0';문자배열을변경하는방법1.첫번째방법은각배열요소에원하는문자를개별적으로대입하는방법이다. 확실한방법이지만아주불편하다.
+2.라이브러리함수인strcpy()를사용하여문자열을문자배열에복사할수있다.
+char str[10] = "Hello";str = "World";  // 문법적인오류!잘못된방법3. 가장편리할것같은, 다음과같은방법은사용할수없다. 주의하여야한다. 배열에서학습하였지만배열의이름은배열을가리키는포인터상수입니다. 변경이불가능합니다. 
+
+문자열상수l문자열상수: “HelloWorld”와 같이프로그램소스안에포함된문자열l문자열 상수는메모리영역중에서텍스트세그먼트(text segment)에저장char *p = "HelloWorld";위문장의정확한의미는무엇일까요?
+
+문자열상수char *p = "HelloWorld";
+
+문자열상수char *p = "HelloWorld";strcpy(p, “Goodbye”);
+p를통하여텍스트세그먼트에문자를저장하려면오류가발생한다. 텍스트세그먼트는변경할수없습니다. 
+
+문자열 상수char *p = "HelloWorld";p = "Goodbye";
+OK!
+예제 
+#include <stdio.h>int main(void){    char* p = "HelloWorld";    printf("%s \n", p);    p = "Welcome to C World!"; // 가능    printf("%s \n", p);    p = "Goodbye"; // 가능    printf("%s \n", p);// p[0] = ‘a’; // 오류가발생한다.    return 0;}
+HelloWorldWelcome to C World!Goodbye
+중간점검1.C에서문자열은어떻게정의되는가?2.문자열에서NULL 문자의역할은무엇인가?3.NULL 문자의아스키코드값은얼마인가?4.NULL 문자로끝나지않는문자열을출력하면어떻게되는가?5.B, 'B', "B"의차이점을설명하라.6.변경가능한문자열은어디에저장되는가?7.문자열의크기보다문자배열의크기를하나더크게하는이유는무엇인가?8.문자배열을문자열로초기화하는방법을아는대로설명하라.
+
+문자입출력라이브러리입출력함수설명int getchar(void)하나의문자를읽어서반환한다.void putchar(int c)변수c에저장된문자를출력한다.int _getch(void)하나의문자를읽어서반환한다(버퍼를사용하지않음).void _putch(int c)변수c에저장된문자를출력한다(버퍼를사용하지않음).scanf("%c", &c)하나의문자를읽어서변수c에저장한다.printf("%c", c);변수c에저장된문자를출력한다.
+프로그램…’A’ ‘B’ ‘C’ ...
+getchar(), putchar()
+A변수getchar()B변수putchar()B
+aabb^Zgetchar(), putchar()// getchar()의사용#include<stdio.h>intmain(void){intch;// 정수형에주의while( (ch = getchar()) != EOF )putchar(ch); return0;}End Of File을나타내는문자,EOF는정수형-1이다.
+EOFlEOF(End Of File): 입력의끝을나타내는특수한기호
+ctrl+z EOF프로그램…getchar()
+getchar()의반환값이정수형인이유lgetchar( )의반환형이int형인것은아스키코드를EOF와구별하기위해서이다. 반환값을32비트int형으로하면아스키코드(0x000000000에서0x000000FF)와32비트int 형-1인EOF(0xFFFFFFFF)와확실하게구분할수있다. 반환값을8비트를하면불가능하다. 
+아스키코드문자 (32비트중에서하위8비트만사용)getchar()0xFFFFFFFF(-1)00000000에서0x000000FFEOF
+버퍼링 l엔터키를쳐야만입력을받는이유
+
+_getch(), _getche(), getchar()
+용도에맞는것을골라사용하세요!버퍼가없이바로받으려면_getch()를사용합니다. 
+
+_getch(), _putch()#include<stdio.h>#include<conio.h>intmain(void){intch;while( (ch = _getch()) != 'q')_putch(ch); return0;}버퍼를사용하지않는다,에코도없음!
+abc
+중간점검1.getchar()와_getch()가다른점은무엇인가?2.하나의문자를입력받는방법에는몇가지나있는가?
+
+문자열입출력라이브러리함수입출력함수설명int scanf("%s", s)문자열을읽어서문자배열s[]에저장int printf("%s", s)배열s[]에저장되어있는문자열을출력한다.char *gets_s(char *s, int size)한줄의문자열을읽어서문자배열s[]에저장한다.int puts(const char *s)배열s[]에저장되어있는한줄의문자열을출력한다.
+프로그램…Hello World!...
+예제#include <stdio.h>int main(void){ char name[100]; char address[100];printf("이름을입력하시오: "); scanf("%s", name);printf("현재거주하는주소를입력하시오: "); scanf("%s", address); printf("안녕하세요, %s에사는%s씨.\n", address, name); return 0;}
+이름을입력하시오: 홍길동현재거주하는주소를입력하시오: 서울시종로구1번지안녕하세요. 서울시에사는홍길동씨.주소가다저장되지못한다. 
+gets_s()와puts() 문자열입출력
+
+예제#include <stdio.h>int main(void){ char name[100]; char address[100]; printf(“이름을입력하시오: “); gets_s(name, sizeof(name)); printf(“현재거주하는주소를입력하시오: “); gets_s(address, sizeof(address)); printf(“안녕하세요, %s에사는%s씨.\n”, address, name); return 0;}한단어이상을입력받을때에사용한다. 
+이름을입력하시오: 홍길동현재거주하는주소를입력하시오: 서울시종로구1번지안녕하세요? 서울시종로구1번지에사는홍길동씨.
+중간점검1.한줄의텍스트를입력받는문장을작성하라. 2.사용자로부터하나의단어를입력받는문장을작성하라. 
+
+문자처리라이브러리함수l문자를검사하거나문자를변환한다.함수설명isalpha(c)c가영문자인가?(a-z, A-Z)isupper(c)c가대문자인가?(A-Z)islower(c)c가소문자인가?(a-z)isdigit(c)c가숫자인가?(0-9)isalnum(c)c가영문자이나숫자인가?(a-z, A-Z, 0-9)isxdigit(c)c가16진수의숫자인가?(0-9, A-F, a-f)isspace(c)c가공백문자인가?(‘ ’, ‘\n', '\t', '\v', '\r')ispunct(c)c가구두점문자인가?isprint(c)C가출력가능한문자인가?iscntrl(c)c가제어문자인가?isascii(c)c가아스키코드인가?
+문자처리라이브러리함수l문자를검사하거나문자를변환한다.함수설명toupper(c)c를대문자로바꾼다.tolower(c)c를소문자로바꾼다.toascii(c)c를아스키코드로바꾼다.
+abcdefABCDEF^Z예제#include <stdio.h>#include <ctype.h>int main( void ){ int c; while((c = getchar()) != EOF) {  if( islower(c) )   c = toupper(c);  putchar(c); } return 0;}소문자인지검사대문자로변환
+EOF를키보드에서입력하려면^Z
+Lab: 단어 세기l문자열안에들어있는단어의개수를세는프로그램을작성하여보자. 문자열이“the c book…”이라면다음과같은출력이나온다. 
+단어의개수: 3
+예제#include <stdio.h>#include <ctype.h>int count_word(char* s);int main(void){    int wc = count_word("the c book...");    printf("단어의개수: %d \n", wc);    return 0;}
+예제int count_word(char* s){    int i, wc = 0, waiting = 1;    for (i = 0; s[i] != NULL; ++i)// s의각글자조사        if (isalpha(s[i]))// s의글자가알파벳이면{if(waiting)// 단어를기다리고있으면{wc++;// 카운터를증가waiting = 0;// 단어를처리하는중}}else// 알파벳이아니면waiting = 1;// 단어를기다린다.     return wc;}
+Lab: 유효한암호확인l유효한암호는7 글자이상이고, 하나이상의소문자, 하나이상의대문자및하나이상의숫자를포함해야한다.
+패스워드를입력하시오: abc1234유효한암호가아닙니다.
+Sol.#include <stdio.h>#include <string.h>#include <ctype.h>int main(void){        int lower_case_count = 0; // 소문자개수        int upper_case_count = 0; // 대문자개수        int digit_count = 0; // 숫자개수        char pass[100];        int len;printf("패스워드를입력하시오: ");        gets_s(pass, sizeof(pass));
+Sol.len = strlen(pass); // 문자열의길이        if (len < 7) {printf("유효한암호가아닙니다. \n");                exit(1);}        for (int i = 0; i < len; i++) {                if (islower(pass[i])) ++lower_case_count;                if (isupper(pass[i])) ++upper_case_count;                if (isdigit(pass[i])) ++digit_count;}        if (lower_case_count > 0 && upper_case_count > 0 && digit_count > 0) printf("강한암호입니다. \n");        else printf("유효한암호가아닙니다\n");        return 0;}
+중간점검1.문자처리라이브러리함수를사용하려면포함시켜야하는헤더파일은무엇인가?2.getchar()와getch()가다른점은무엇인가?3.ispunct('.')의반환값은무엇인가?4.toupper('a')의반환값은무엇인가?
+
+문자열처리라이브러리l문자열함수들은string.h에선언되어있다. 따라서이들함수들을사용하려면string.h를프로그램의첫부분에서포함시켜야한다. 함수설명strlen(s)문자열s의길이를구한다. strcpy(s1, s2)s2를s1에복사한다.strcat(s1, s2)s2를s1의끝에붙여넣는다.strcmp(s1, s2)s1과s2를비교한다.strncpy(s1, s2, n)s2의최대n개의문자를s1에복사한다.strncat(s1, s2, n)s2의최대n개의문자를s1의끝에붙여넣는다.strncmp(s1, s2, n)최대n개의문자까지s1과s2를비교한다.strchr(s, c)문자열s안에서문자c를찾는다.strstr(s1, s2) 문자열s1에서문자열s2를찾는다.
+문자열의길이l문자열의길이를계산하는함수는strlen(const char *str)이다. int size = strlen("Hello"); // size는5가된다. 
+
+문자열복사
+
+문자열복사애니메이션
+dst
+srcHello
+\0Hello
+\0char dst[6];char src[6] = “Hello";strcpy(dst, src);
+문자열연결
+
+문자열연결애니메이션
+orld
+\0Wsrc
+orld
+\0
+Hello
+\0dstWchar dst[12] = "Hello";char src[6] = "World";strcat(dst, src);
+예제
+// strcpy와 strcat#include <string.h>#include <stdio.h>int main( void ){ char string[80]; strcpy( string, "Hello world from " );  strcat( string, "strcpy " );            strcat( string, "and " );               strcat( string, "strcat!" );           printf( "string = %s\n", string ); return 0;}
+string=Helloworldfromstrcpyandstrcat!
+문자열비교
+문자열이 같으면strcmp()는0을반환합니다. 주의하세요!
+
+예제// strcmp() 함수#include <string.h>#include <stdio.h>int main( void ){ char s1[80]; // 첫번째 단어를 저장할 문자배열 char s2[80]; // 두번째 단어를 저장할 문자배열 int result; printf("첫번째 단어를 입력하시오:"); scanf("%s", s1); printf("두번째 단어를 입력하시오:"); scanf("%s", s2);
+첫번째단어를입력하시오: cat두번째단어를입력하시오: dogcat가dog보다앞에있읍니다.예제 result = strcmp(s1, s2); if( result < 0 )  printf("%s가 %s보다 앞에 있읍니다.\n", s1, s2); else if( result == 0 )  printf("%s가 %s와 같습니다.\n", s1, s2); else   printf("%s가 %s보다 뒤에 있습니다.\n", s1, s2); return 0;}알파벳순으로즉사전에서앞에있다는의미
+문자검색l주어진문자열에특정한문자가있는지를검색하려면strchr( )를이용한다.
+
+문자검색#include <string.h>#include <stdio.h>int main( void ){ char s[] = "language";   char c = 'g'; char *p; int loc; p = strchr(s, c); if ( p == NULL )printf( "%c가발견되지않았음\n", c ); else {  loc = (int)(p - s);printf("%s에서첫번째%c가%d에서발견되었음\n", s, c, loc);} return 0;}s안에서  문자 c를 찾는다. 
+language에서첫번째g가3에서발견되었음
+문자열검색l주어진문자열안에특정한문자열이있는지를검색하려면strstr()를이용한다. 
+
+문자열 검색#include <string.h>#include <stdio.h>int main( void ){ char s[] = "A bird in hand is worth two in the bush"; char sub[] = "bird"; char *p; int loc; p = strstr(s, sub); if ( p == NULL )printf( "%s가발견되지않았음\n", sub ); else {  loc = (int)(p - s);printf( "%s에서첫번째%s가%d에서발견되었음\n", s, sub, loc );} return 0;}s안에서 문자열sub를 찾는다. 
+A bird in hand is worth two in the bush에서첫번째bird가2에서발견되었음
+문자열토큰분리lstrtok()함수를사용하면문장에서단어를쉽게분리할수있다. 
+
+문자열토큰분리lstrtok()함수를사용하면문장에서단어를쉽게분리할수있다. char[] s = “Man is immortal, because he has a soul”;t1 = strtok(s, “ “);  // 첫 번째토큰: Mant2 = strtok(NULL, " "); // 두번째토큰: isT3 = strtok(NULL, “ “); // 세번째토큰: immortal,t4 = strtok(NULL, " "); // 네번째토큰: because
+문자열토큰분리// strtok 함수의사용예#include <string.h>#include <stdio.h>char s[] = "Man is immortal, because he has a soul";char seps[]   = " ,\t\n";char *token;int main( void ){ // 문자열을 전달하고 다음 토큰을 얻는다.  token = strtok( s, seps );  while( token != NULL ) {  // 문자열 s에 토큰이 있는 동안 반복한다.        printf( "토큰: %s\n", token );  // 다음 토큰을 얻는다.        token = strtok( NULL, seps ); //    } }분리자
+토큰: Man토큰: is토큰: immortal토큰: because토큰: he토큰: has토큰: a토큰: soul
+Lab: 단답형퀴즈프로그램l단답형문제를채점하는프로그램을작성해보자. 사용자가정답을입력할때까지반복한다. 단답형문제이기때문에문자열이일치하는지를검사한다.
+임베디드장치에가장많이사용되는언어는? Java 임베디드장치에가장많이사용되는언어는? Python임베디드장치에가장많이사용되는언어는? C 맞았습니다! 
+Sol.#include <stdio.h>#include <string.h>int main(void){ char key[] = "C"; char buffer[80] = ""; do {printf("임베디드장치에가장많이사용되는언어는? ");  gets_s(buffer, sizeof(buffer)); } while (strcmp(key, buffer) != 0); printf("맞았습니다!"); return 0;}
+중간점검1.문자열s1를문자열s2로복사하는문장을써라. 2.“String"을저장하려면최소한어떤크기이상의문자배열이필요한가?3.문자열을서로비교하는함수는?4.strcpy()와strncpy()의차이점은무엇인가?5.s1[]에저장된문자열뒤에s2[]를붙이고싶으면어떤라이브러리함수를어떻게사용하여야하는가?6.strcmp("dog", "dog")의반환값은얼마인가?
+
+문자열수치변환l문자열“36.5”와수치값36.5는 컴퓨터안에서상당히다르게저장된다. 
+src[0]  src[1] src[2]  src[3]  src[4]  src[5]36.5
+\0문자열실수값
+36.5v
+sprintf()와sscanf()l앞에 붙은s는string을의미한다. 
+src[0]  src[1] src[2]  src[3]  src[4]  src[5]36.5
+\0문자열수치
+36.5vsscanf(str, “%f”, &v);
+sprintf(str, “%f”, v);
+예제#include <stdio.h>int main( void ){ char instring[]="file 12"; char name[10];  int number; sscanf(instring, "%s %d", name, &number); printf("name = %s \n", name); printf("number = %d \n", number); return 0;}
+name = filenumber = 12
+예제#include <stdio.h>int main( void ){ char buffer[50];int x=10, y=20, result; result = x + y;sprintf(buffer, "정수%d와정수%d를더하면%d입니다.", x, y, result); printf("%s \n", buffer); return 0;}
+정수10와정수20를더하면30입니다.
+Lab: 영상파일이름자동생성l파일이름을자동으로생성하는프로그램을작성해보자. 
+image0.jpgimage1.jpgimage2.jpgimage3.jpgimage4.jpgimage5.jpg
+예제#include <stdio.h>#include <string.h>int main(void){    char filename[100];    int i;for(i=0; i < 6; i++){        sprintf(filename, "image%d.jpg", i);        printf("%s \n", filename);}    return 0;}순차적인파일이름을만든다.
+image0.jpgimage1.jpgimage2.jpgimage3.jpgimage4.jpgimage5.jpg
+문자열을수치로변환하는전용함수l전용함수는scanf()보다크기가작다.lstdlib.h에원형정의- 반드시포함함수설명int atoi( const char *str );str을int형으로변환한다.double atof( const char *str );str을double형으로변환한다.
+src[0]  src[1] src[2]  src[3]  src[4]  src[5]36.5
+\0문자열수치
+36.5v
+문자열수치변환 #include <stdio.h>#include <stdlib.h>int main( void ){ char s1[] = "100"; char s2[] = "12.93"; int i; double d, result; i = atoi(s1); d = atof(s2); result = i + d; printf("연산결과는%.2f입니다.\n", result); return 0;}
+연산결과는112.93입니다. 
+중간점검1.실수값3.141592와문자열“3.141592”가차지하는메모리공간을비교하라.2.문자열“3.141592”를실수값을변환하고자할때사용할수있는함수는어떤것들이있는가?3.printf()와sprintf()가다른점은무엇인가?
+
+문자열의배열l문자열이여러개있는경우에는어떤구조를사용하여저장하면제일좋을까?l(예) “init”, “open”, “close”, …l2가지의방법이있다. l문자열배열l문자포인터배열
+“init”
+“open”
+“close”
+1. 문자열배열char s[3][6] = { "init", "open", "close"};
+s[0][0] s[0][1] s[0][2] s[0][3] s[0][4] s[0][5]init
+\0
+open
+\0
+close
+\0s[1][0] s[1][1] s[1][2] s[1][3] s[1][4]  s[1][5]s[2][0] s[2][1] s[2][2] s[2][3] s[2][4]  s[2][5]열
+행
+2. 문자포인터배열char *s[3] = { "init", "open", "close"};
+“init”
+“open”
+“close”
+
+예제#include <stdio.h>int main(void){    int i;    char menu[5][10] = {        "init",        "open",        "close",        "read",        "write"};for(i = 0; i < 5; i++)        printf("%d 번째메뉴: %s \n", i, menu[i]);    return 0;}
+0 번째메뉴: init1 번째메뉴: open2 번째메뉴: close3 번째메뉴: read4 번째메뉴: write
+2차원배열로입력#include<stdio.h>intmain( void){inti;charfruits[3][20];for(i = 0; i < 3; i++) {printf("과일이름을입력하시오: ", fruits[i]);scanf("%s", fruits[i]);}for(i = 0; i < 3; i++)printf("%d번째과일: %s\n", i, fruits[i]);return0;}앞에 &을붙이면안됨!
+과일이름을입력하시오: 사과과일이름을입력하시오: 배과일이름을입력하시오: 포도0번째과일: 사과1번째과일: 배2번째과일: 포도
+Lab: 한영 사전의구현l3차원문자열배열을이용하여간단한한영사전을구현하여보자.
+단어를입력하시오:boyboy: 소년
+
+한영사전구현#define ENTRIES 5int main( void ){ int i, index; char dic[ENTRIES][2][30] = {  {"book", "책"},  {"boy", "소년"},  {"computer", "컴퓨터"},  {"lanuguage", "언어"},  {"rain", "비"}, }; char word[30]; 
+한영사전구현 printf("단어를 입력하시오:"); scanf("%s", word); index = 0; for(i = 0; i < ENTRIES; i++) {  if( strcmp(dic[index][0], word) == 0 )  {   printf("%s: %s\n", word, dic[index][1]);   return 0;  }  index++; } printf("사전에서 발견되지 않았습니다.\n");}
+단어를입력하시오:bookbook: 책
+Lab: 메시지암호화l메시지를암호화하는간단한기법중의하나는줄리어스시저가사용한암호화기법l평문에단순히더하기(즉, 영어의알파벳을왼쪽으로이동하던지오른쪽으로이동하는것)
+
+실행결과
+문자열을입력하시오: meet at midnight암호화된문자열: phhw dw plgqjkw
+
+코드#include <stdio.h>void encrypt(char cipher[], int shift);int main (void) {char cipher[50]; int shift=3;printf("문자열을입력하시오: ");gets_s(cipher, 50); // 한줄전체입력encrypt (cipher, shift); return 0;}
+코드void encrypt (char cipher[], int shift) { int i = 0;while (cipher[i] != '\0') {    if( cipher[i] >= ‘a' && cipher[i] <= 'z'){cipher[i] += shift;      if( cipher[i] > 'z' )     cipher[i] -= 26;  }  i++; } printf("암호화된문자열: %s", cipher);}아스키코드값을이동한다. 
+도전문제l복호화하는함수decrypt()도작성하여테스트하라. l메뉴를만들어서사용자로하여금암호화와복호화중에서선택하게하라. 1— 암호화2 — 복호화
+Mini Project: 행맨게임l빈칸으로구성된문자열이주어지고사용자는문자열에들어갈글자들을하나씩추측해서맞추는게임l사용자가문자열에들어있는글자를정확하게입력했으면화면에그글자를출력한다. l일정한횟수만시도할수있게하라. 
+문자열을입력하시오: ____ __ _______글자를추측하시오: a문자열을입력하시오: ____ a_ _______글자를추측하시오: e문자열을입력하시오: _ee_ a_ _______...
+소스#include <stdio.h>#include <string.h>int check(char s[], char a[], char ch);int main (void) { char solution[100] = "meet at midnight" char answer[100] = "____ __ ________"char ch; while(1) {  printf("문자열을입력하시오: %s \n", answer);  printf("글자를추측하시오: ");ch = getchar();if( check(solution, answer, ch) == 1 )      break;  getchar();// 줄바꿈문자제거}return 0;}
+소스int check(char s[], char a[], char ch){ int i; for(i=0; s[i] != NULL; i++){if( s[i] == ch )      a[i] = ch; } if( strcmp(s, a)==0 ) return 1; // 정답과일치하는지를검사else return 0;}
+도전문제1."meet at midnight"에서“____ __ ________”을자동으로생성할수있는가?2.여러개의단어들이들어있는2차원배열을생성하여서랜덤하게하나의정답을고르도록프로그램을업그레이드하라. 3.일정한횟수만시도할수있게하라. 
+Q & A

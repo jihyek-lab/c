@@ -1,0 +1,146 @@
+제11장포인터C언어EXPRESS(개정4판)
+
+이번장에서학습할내용•포인터이란?•변수의주소•포인터의선언•간접참조연산자•포인터연산•포인터와배열•포인터와함수이번장에서는포인터의기초적인지식을학습한다. 
+
+포인터란?l포인터(pointer):   주소를가지고있는변수
+
+변수에어디에저장되는가?l변수는메모리에저장된다.l메모리는바이트단위로액세스된다.l첫번째바이트의주소는0, 두번째바이트는1,…
+
+변수와메모리l변수의크기에따라서차지하는메모리공간이달라진다.lchar형변수: 1바이트, int형변수: 4바이트,…int main(void){  int i = 10;  char c = 69;  float f = 12.3;  return0;}
+
+변수의주소l변수의주소를계산하는연산자: &l변수i의주소: &i
+
+변수의주소int main(void){ int i = 10; char c = 69; float f = 12.3; printf("i의주소: %p\n", &i); // 변수i의주소출력printf("c의주소: %p\n", &c); // 변수c의주소출력printf("f의주소: %p\n", &f); // 변수f의주소출력return 0;}
+i의주소: 0000003D69DDF974c의주소: 0000003D69DDF994f의주소: 0000003D69DDF9B8프로그램을 실행할때마다주소는달라집니다. 
+
+주의l여러개의포인터변수를한줄에선언할때는주의하여야한다. 다음과같이선언하는것은잘못되었다. lint *p1, p2, p3; // (×) p2와p3는정수형변수가된다. l올바르게선언하려면다음과같이하여야한다. lint *p1, *p2, *p3; // (○) p2와p3는정수형변수가된다.
+포인터의선언l포인터: 변수의주소를가지고있는변수
+
+포인터의 초기화: 절대주소로초기화l아두이노와같은엠메디드시스템에서는가능l윈도우에서는안됨
+
+포인터와 변수의연결inti = 10;// 정수형변수i 선언int*p;  // 포인터변수p 선언p = &i; // 변수i의주소가포인터p로대입
+
+다양한포인터의선언char c = 'A';  // 문자형 변수 cfloat f = 36.5;  // 실수형 변수 fdouble d = 3.141592; // 실수형 변수 dchar *pc = &c;  // 문자를 가리키는 포인터 pcfloat *pf = &f;  // 실수를 가리키는 포인터 pf double *pd = &d;  // 실수를 가리키는 포인터 pd
+
+예제#include <stdio.h>int main(void){    int i = 10;    double f = 12.3;    int* pi = NULL;    double* pf = NULL;    pi = &i;    pf = &f;printf("%p%p \n", pi, &i);printf("%p %p \n", pf, &f);    return 0;}
+0000002AFF8FFB24 0000002AFF8FFB240000002AFF8FFB48 0000002AFF8FFB48
+참고lNULL은stdio.h 헤더파일에다음과같이정의된포인터상수로0번지를의미한다. l#define NULL ((void *)0)l0번지는일반적으로는사용할수없다(CPU가인터럽트를위하여사용한다). 따라서포인터변수의값이0이면아무것도가리키고있지않다고판단할수있다. NULL포인터아무것도가리키지않음
+간접참조연산자l간접참조연산자*: 포인터가가리키는값을가져오는연산자int i = 10; int* p; p = &i; printf("%d \n", *p);
+
+간접참조연산자의해석l간접참조연산자: 지정된위치에서포인터의타입에따라값을읽어들인다.int*pi = (int *)10000;char *pc = (char *)10000;double *pd = (double *)10000;
+
+& 연산자와 * 연산자l& 연산자: 변수의주소를반환한다l* 연산자: 포인터가가리키는곳의내용을반환한다. 
+
+포인터예제#1#include <stdio.h>int main(void){ int i = 3000; int *p=NULL;  p = &i; printf("p = %p\n", p);printf("&i = %p\n\n", &i); printf("i = %d\n", i); printf("*p = %d\n", *p); return 0;} 
+3000
+i
+p
+p = 0000006DEA0FFBD4&i = 0000006DEA0FFBD4i = 3000*p = 3000
+포인터예제#2#include <stdio.h>int main(void){ int x=10, y=20; int *p; p = &x; printf("p = %p\n", p); printf("*p = %u\n\n", *p); p = &y; printf("p = %p\n", p); printf("*p = %u\n", *p); return 0;}
+20
+y
+p
+10
+x
+p = 0000007A8F3AF974*p = 10p = 0000007A8F3AF994*p = 20
+포인터예제#3#include <stdio.h>int main(void){ int i=10; int *p; p = &i; printf("i = %d\n", i); *p = 20; printf("i = %d\n", i); return 0;}
+p
+10
+i포인터를통하여변수의값을변경한다. 
+i = 10i = 20
+Lab: 엠베디드프로그래밍체험#1l예를들어서LED가붙어있는엠베디드시스템을가정하자. 0x30000000번지에LED를제어하는입출력포트가매핑되어있다. lLED를1초에한번씩켰다가끄고싶다. 코드를어떻게만들어야할까? 
+
+Sol.volatile char *p = (volatile char *) 0x30000000;int i;while(1) { *p |= 0x1; // 첫번째비트를1로만든다. 다른비트들은건드리지않는다. for(i=0;i<100000; i++) ; // 시간지연루프      *p &= ~(0x1); // 첫번째비트를0로만든다.  for(i=0;i<100000; i++) ; // 시간지연루프}
+중간점검1.메모리는어떤단위를기준으로주소가매겨지는가?2.다음의각자료형이차지하는메모리공간의크기를쓰시오. (a) char (b) short (c) int (d) long (e) float (f) double3.포인터도변수인가?4.변수의주소를추출하는데사용되는연산자는무엇인가?5.변수x의주소를추출하여변수p에대입하는문장을쓰시오.6.정수형포인터p가가리키는위치에25를저장하는문장을쓰시오.
+
+포인터사용시주의점l초기화가안된포인터를사용하면안된다.int main(void) {  int *p; // 포인터 p는 초기화가 안되어 있음 *p = 100; // 위험한 코드 return 0;}
+
+포인터사용시주의점l포인터는 C언어의강점이자단점이다. l개발자가책임감을가지고사용하여야한다. l포인터를사용할때는스파이더맨영화에나왔던, 다음과같은말을항상기억하자.
+
+포인터사용시주의점l포인터가아무것도가리키고있지않는경우에는NULL로초기화lNULL 포인터를가지고간접참조하면하드웨어로감지할수있다.  int *p = NULL; 
+
+포인터사용시주의점l포인터의타입과변수의타입은일치하여야한다.#include <stdio.h>int main(void){ int i; double *pd; pd = &i; // 오류!  *pd = 36.5;  return 0;}
+
+중간점검1.초기값이결정되지않은포인터에는어떤값을넣어두는것이안전한가?2.char형변수에double형포인터로값을저장한다면어떤문제가발생하는가? 
+
+포인터연산l가능한연산: 증가, 감소, 덧셈, 뺄셈연산l증가연산의경우증가되는값은포인터가가리키는객체의크기
+
+증가연산예제// 포인터의증감연산#include <stdio.h>int main(void){ char *pc; int *pi; double *pd; pc = (char *)10000; pi = (int *)10000; pd = (double *)10000;printf(" pc=%u,  pc+1=%u,  pc+2= %u\n", pc, pc + 1, pc + 2);printf(" pi=%u,  pi+1=%u,  pi+2= %u\n", pi, pi + 1, pi + 2);printf(" pd=%u,  pd+1=%u,  pd+2= %u\n", pd, pd + 1, pd + 2); return 0;}
+pc=10000,  pc+1=10001,  pc+2= 10002 pi=10000,  pi+1=10004,  pi+2= 10008 pd=10000,  pd+1=10008,  pd+2= 10016
+포인터의증감연산
+
+간접참조연산자와증감연산자l*p++;lp가가리키는위치에서값을가져온후에p를증가한다. l(*p)++;lp가가리키는위치의값을 증가한다.
+수식의미v = *p++p가가리키는값을v에대입한후에p를증가한다.v = (*p)++p가가리키는값을v에대입한후에가리키는값을증가한다.v = *++pp를증가시킨후에p가가리키는값을v에대입한다.v = ++*pp가가리키는값을가져온후에그값을증가하여v에대입한다.
+간접참조연산자와증감연산자// 포인터의증감연산#include <stdio.h>int main(void){ int i = 10; int *pi = &i; printf("i = %d,  pi = %p\n", i, pi); (*pi)++;  printf("i = %d,  pi = %p\n", i, pi); *pi++;  printf("i = %d,  pi = %p\n", i, pi); return 0;}pi가가리키는위치의값을증가한다. 
+pi가가리키는위치에서값을가져온후에pi를증가한다. 
+i = 10,  pi = 000000FFEBCFF974i = 11,  pi = 000000FFEBCFF974i = 11,  pi = 000000FFEBCFF978
+포인터의형변환lC언어에서는꼭필요한경우에, 명시적으로포인터의타입을변경할수있다.double* pd = &f; int* pi; pi = (int*)pd;
+예제#include <stdio.h>int main(void){ int data = 0x0A0B0C0D; char *pc; int i; pc = (char *)&data;for(i = 0; i < 4; i++)   printf("*(pc + %d) = %02X \n", i, *(pc + i)); return 0;}
+*(pc+0)=0D*(pc+1)=0C*(pc+2)=0B*(pc+3)=0A
+참고 l포인터의증감연산에서포인터의위험성을조금은느낄수있다. 포인터는우리가마음대로증감시킬수있지만증감된포인터가잘못된위치를가리킬수도있다. l우리가만든데이터가아닌남의데이터를가리킬수도있고운영체제가사용하는데이터영역을가리킬수도있다. l이런경우, 포인터를이용하여값을쓰거나읽게되면심각한오류가발생할수있다. 
+중간점검1.포인터에대하여적용할수있는연산에는어떤것들이있는가?2.int형포인터p가80번지를가리키고있었다면(p+1)은몇번지를가리키는가?3.p가포인터라고하면*p++와(*p)++의차이점은무엇인가?4.p가포인터라고하면*(p+3)의의미는무엇인가?
+
+인수전달방법l함수 호출시에인수전달방법l값에의한호출(callby value) l함수로복사본이 전달된다.lC언어에서의기본적인방법l참조에의한호출(call by reference) l함수로원본이전달된다. lC에서는포인터를이용하여흉내낼수있다.
+swap() 함수#1(값에의한호출) #include <stdio.h>void swap(int x, int y);int main(void){ int a = 100, b = 200;printf(“a=%d b=%d\n”,a, b); swap(a, b);printf(“a=%d b=%d\n”,a, b); return 0;}void swap(int x, int y){ int tmp;printf(“x=%d y=%d\n”,x, y); tmp = x; x = y; y = tmp;printf(“x=%d y=%d\n”,x, y);}
+a=100b=200x=100y=200x=200y=100a=100b=200
+값에의한호출
+
+swap() 함수#2(참조에의한호출)#include <stdio.h>void swap(int x, int y);int main(void){ int a = 100, b = 200;printf(“a=%d b=%d\n”,a, b); swap(&a, &b);printf(“a=%d b=%d\n”,a, b); return 0;}void swap(int *px, int *py){ int tmp; tmp = *px; *px = *py; *py = tmp;}
+a=100b=200a=200b=100
+참조에 의한호출
+
+scanf() 함수 l변수에 값을저장하기위하여변수의주소를받는다. 
+
+참고:함수가포인터를통하여값을변경할수없게하려면?l함수의매개변수를선언할때앞에const를붙이면된다. const를앞에붙이면포인터가가리키는내용이변경불가능한상수라는뜻이된다. void sub(const int *p){ *p = 0; // 오류!! }
+예제l만약함수가하나이상의값을반환하여야한다면포인터를사용하는것이하나의방법이다. 직선의기울기와y절편의값을동시에반환하는함수를작성해보자. 
+기울기는1.000000, y절편은0.000000
+2개이상의결과를반환#include <stdio.h>// 기울기와 y절편을계산int get_line_parameter(int x1, int y1, int x2, int y2, float *slope, float *yintercept){ if( x1 == x2 )   return -1; else {   *slope = (float)(y2 - y1)/(float)(x2 - x1);   *yintercept = y1 - (*slope)*x1;   return 0; }}int main(void){ float s, y; if( get_line_parameter(3,3,6,6,&s,&y) == -1 )  printf("에러\n"); else   printf("기울기는 %f, y절편은 %f\n", s, y); return 0;}기울기와Y절편을인수로전달
+기울기는1.000000, y절편은0.000000
+포인터를반환할때주의점l함수가종료되더라도남아있는변수의주소를반환하여야한다.l지역변수의주소를반환하면, 함수가종료되면사라지기때문에오류int *add(int x, int y){ int result; result = x + y; return &result;  }지역변수는함수호출이종료되면사라지므로지역변수의주소를반환하면안됩니다. 
+
+중간점검1.함수에매개변수로변수의복사본이전달되는것을____________라고한다. 2.함수에매개변수로변수의원본이전달되는것을____________라고한다. 3.함수안에서외부변수를변경해야하는경우에는어떤방법을사용하여인수를전달하여야하는가?
+
+포인터와배열l배열과포인터는아주밀접한관계를가지고있다. l배열이름이바로포인터이다.l포인터는배열처럼사용이가능하다. 
+배열포인터[0][1]a[2][3][4][5][6][7][8]p배열 
+포인터 
+포인터와배열// 포인터와 배열의 관계#include <stdio.h>int main(void){ int a[] = { 10, 20, 30, 40, 50 }; printf("&a[0] = %u\n", &a[0]);  printf("&a[1] = %u\n", &a[1]);  printf("&a[2] = %u\n", &a[2]);  printf("a = %u\n", a);  return 0;}
+&a[0] = 1245008&a[1] = 1245012&a[2] = 1245016a = 1245008
+예제// 포인터와배열의관계#include <stdio.h> int main(void){    int a[] = { 10, 20, 30, 40, 50 };printf("a = %u\n", a);printf("a + 1 = %u\n", a + 1);printf("*a = %d\n", *a);printf("*(a+1) = %d\n", *(a + 1));    return 0;}
+a=1245008a+1=1245012*a=10*(a+1)=20
+포인터와배열l포인터는배열처럼사용할수있다. l인덱스표기법을포인터에사용할수있다. 
+
+포인터를배열처럼사용#include <stdio.h>int main(void){ int a[] = { 10, 20, 30, 40, 50 }; int *p; p = a; printf("a[0]=%d a[1]=%d a[2]=%d \n", a[0], a[1], a[2]); printf("p[0]=%d p[1]=%d p[2]=%d \n\n", p[0], p[1], p[2]); p[0] = 60; p[1] = 70; p[2] = 80; printf("a[0]=%d a[1]=%d a[2]=%d \n", a[0], a[1], a[2]); printf("p[0]=%d p[1]=%d p[2]=%d \n", p[0], p[1], p[2]); return 0;}배열은결국포인터로구현된다는것을알수있다.포인터을통하여배열원소를변경할수있다.
+a[0]=10 a[1]=20 a[2]=30p[0]=10 p[1]=20 p[2]=30a[0]=60 a[1]=70 a[2]=80p[0]=60 p[1]=70 p[2]=80
+포인터를배열의이름처럼사용할수도있다.
+
+배열매개변수l일반매개변수vs 배열매개변수
+lWhy? -> 배열을함수로복사하려면많은시간소모되므로배열은주소만을전달한다. // 매개 변수 x에 기억 장소가 할당void sub(int x){ ...}//  b에 기억 장소가 할당되지 않는다.void sub( int b[] ){ ...}
+배열매개변수l배열매개변수는포인터로생각할수있다. 
+
+// 포인터와함수의관계#include <stdio.h>void sub(int b[], int n);int main(void){    int a[3] = { 1,2,3 };printf("%d %d %d\n", a[0], a[1], a[2]);    sub(a, 3);printf("%d %d %d\n", a[0], a[1], a[2]);    return 0;}void sub(int b[], int n){    b[0] = 4;    b[1] = 5;    b[2] = 6;}
+1 2 34 5 6
+다음2가지방법은완전히동일하다.
+
+포인터를사용한방법의장점l포인터가인덱스표기법보다빠르다.lWhy?: 인덱스를주소로변환할필요가없다. int get_sum1(int a[], int n){ int i; int sum = 0; for(i = 0; i < n; i++ )  sum += a[i]; return sum;}int get_sum2(int a[], int n){ int i, sum=0; int *p; p = a; for(i = 0; i < n; i++ )  sum += *p++; return sum;}인덱스표기법사용포인터사용
+컴파일러가최적화를하면성능은거의비숫해진다. 
+중간점검1.함수에매개변수로변수의복사본이전달되는것을____________라고한다. 2.함수에매개변수로변수의원본이전달되는것을____________라고한다. 3.배열을함수의매개변수로지정하는경우, 배열의복사가일어나는가? 
+
+Lab: 영상처리l디지털이미지는숫자들의 배열로생각할수있다. l이미지내의모든픽셀의값을10씩증가시켜보자. 
+
+010 020 030 040 050010 020 030 040 050010 020 030 040 050010 020 030 040 050010 020 030 040 050020 030 040 050 060020 030 040 050 060020 030 040 050 060020 030 040 050 060020 030 040 050 060실행결과모든픽셀의값이10씩증가되었다.
+Lab: 영상처리#include <stdio.h>#define SIZE 5void print_image(int image[][SIZE]){ int r,c; for(r=0;r<SIZE;r++){  for(c=0;c<SIZE;c++){   printf("%03d ", image[r][c]);  }  printf("\n"); } printf("\n");}
+Lab: 영상처리void brighten_image(int image[][SIZE]){ int r,c; int *p; p = &image[0][0]; for(r=0;r<SIZE;r++){  for(c=0;c<SIZE;c++){   *p += 10;   p++;  }}}
+Lab : 영상처리int main(void){ int image[5][5] = {  { 10, 20, 30, 40, 50},  { 10, 20, 30, 40, 50},  { 10, 20, 30, 40, 50},{ 10, 20, 30, 40, 50},  { 10, 20, 30, 40, 50}};print_image(image); brighten_image(image); print_image(image); return 0;}
+도전문제l포인터를이용하지않는버전도작성하여보자. 즉배열의인덱스표기법으로위의프로그램을변환하여보자. 
+중간점검1.배열의첫번째원소의주소를계산하는2가지방법을설명하라.2.배열a[]에서*a의의미는무엇인가?3.배열의이름에다른변수의주소를대입할수있는가?4.포인터를이용하여배열의원소들을참조할수있는가?5.포인터를배열의이름처럼사용할수있는가?
+
+포인터사용의장점l연결리스트나이진트리등의향상된자료구조를만들수있다. 
+l참조에의한호출l포인터를매개변수로이용하여함수외부의변수의값을변경할수있다.
+
+포인터사용의장점l메모리매핑하드웨어l메모리매핑하드웨어란메모리처럼접근할수있는하드웨어장치를의미한다.l동적메모리할당l17장에서다룬다.l동적메모리를사용하려면반드시포인터가있어야한다. volatile int *hw_address = (volatile int *)0x7FFF;*hw_address = 0x0001; // 주소0x7FFF에있는장치에0x0001 값을쓴다.
+
+MiniProject: 자율주행자동차l자율 주행자동차에서getSensorData() 함수를호출하여3개의double형데이터를받아보자. 
+왼쪽센서과장애물과의거리: 41.000000중간센서과장애물과의거리: 67.000000오른쪽센서과장애물과의거리: 34.000000
+#include <stdio.h>#include <stdlib.h>// 0부터99까지의난수(실수형태)를발생하여크기가3인배열p에저장한다. void getSensorData(double* p){// 여기를작성한다.      return;}int main(void){    double sensorData[3];    getSensorData(sensorData);printf("왼쪽센서와장애물과의거리: %lf \n", sensorData[0]);printf("중간센서와장애물과의거리: %lf \n", sensorData[1]);printf("오른쪽센서와장애물과의거리: %lf \n", sensorData[2]);    return 0;}
+#include <stdio.h>// 0부터99까지의난수(실수형태)를발생하여크기가3인배열p에저장한다. void getSensorData(double * p) {// 여기를작성한다.  return;}int main(void){ double sensorData[3]; getSensorData(sensorData);printf("왼쪽센서와장애물과의거리: %lf \n", sensorData[0]);printf("중간센서와장애물과의거리: %lf \n", sensorData[1]);printf("오른쪽센서와장애물과의거리: %lf \n", sensorData[2]); return 0;} 
+Q & A

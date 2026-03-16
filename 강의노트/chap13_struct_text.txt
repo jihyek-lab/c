@@ -1,0 +1,140 @@
+제13장구조체C언어EXPRESS(개정4판)
+
+이번장에서학습할내용•구조체의개념, 정의, 초기화방법•구조체와포인터와의관계•공용체와typedef 구조체는서로다른데이터들을하나로묶는중요한도구입니다.
+
+자료형의분류
+
+구조체의필요성l학생에대한데이터를하나로모으려면?int number;char name[10]; double grade;와같이개별변수로나타낼수있지만묶을수가있나?
+
+구조체의필요성
+구조체를사용하면변수들을하나로묶을수있습니다.
+
+배열과구조체
+같은타입의변수들을묶는다. 서로다른타입의변수들을묶는다. 
+중간점검1. 구조체와배열의차이점을이야기해보라.2. 복소수, 날짜, 화면의좌표, 사각형등을표현하는데필요한데이터를나열해보라.
+
+구조체선언
+
+구조체선언l구조체선언은변수선언은아님
+
+구조체선언의예
+// x값과y값으로이루어지는화면의좌표struct point { int x;  // x 좌표int y;  // y 좌표};
+// 복소수struct complex { double real; // 실수부 double imag; // 허수부};
+// 날짜struct date { int month;   int day; int year;};
+// 사각형struct rectangle { int x, y; int width; int height;};
+구조체변수선언l구조체정의와구조체변수선언은다르다.
+
+구조체의초기화l중괄호를이용하여초기값을나열한다. struct student {  int number;  char name[10];  double grade;};struct student s1 = { 24, "Kim", 4.3 };
+
+구조체멤버참조.
+.기호는구조체에서멤버를참조할때사용하는연산자입니다. 
+
+예제#1…struct student { int number; char name[10]; double grade;};int main(void){ struct student s; s.number = 20230001; strcpy(s.name,"홍길동"); s.grade = 4.3; printf("학번: %d\n", s.number); printf("이름: %s\n", s.name); printf(“학점: %.2f\n", s.grade); return 0;}구조체선언구조체변수선언구조체멤버참조
+학번: 20230001이름: 홍길동학점: 4.30
+예제#2struct student { int number; char name[10]; double grade;};int main(void){ struct student s; printf("학번을 입력하시오: "); scanf("%d", &s.number); printf("이름을 입력하시오: "); scanf("%s", s.name); printf("학점을 입력하시오(실수): "); scanf("%lf", &s.grade); printf(“\n학번: %d\n", s.number); printf("이름: %s\n", s.name); printf("학점: %.2f\n", s.grade); return 0;}구조체선언구조체변수선언구조체멤버의주소전달
+학번을입력하시오: 20230001이름을입력하시오: 홍길동학점을입력하시오(실수): 4.3학번: 20230001이름: 홍길동학점: 4.30
+새로운초기화방법#include <stdio.h>// 2차원공간의점을구조체로나타낸다. struct point { int    x; int    y;};int main(void) { struct point p = { 1, 2 };  // ①structpointq = { .y = 2, .x = 1 };// ② struct point r = p;   // ③  r = (struct point) { 1, 2 };  // ④ C99 버전printf("p=(%d, %d) \n", p.x, p.y);printf("q=(%d, %d) \n", q.x, q.y);printf("r=(%d, %d) \n", r.x, r.y); return 0;}
+Lab: 2차원공간상의점을구조체로표현하기l사용자로부터두점의좌표를입력받아서두점사이의거리를계산하여보자. 점의좌표를구조체로표현한다.
+점의좌표를입력하시오(x y): 10 10점의좌표를입력하시오(x y): 20 20거리는14.142136입니다.
+소스#include <stdio.h>#include <math.h>struct point { int x; int y;};int main(void){ struct point p1, p2; int xdiff, ydiff; double dist; printf("점의 좌표를 입력하시오(x  y): "); scanf("%d %d", &p1.x, &p1.y); printf("점의 좌표를 입력하시오(x  y): "); scanf("%d %d", &p2.x, &p2.y); p1 (x,y)p2 (x,y)
+소스 xdiff = p1.x - p2.x; ydiff = p1.y - p2.y; dist = sqrt((double)(xdiff * xdiff + ydiff * ydiff));  printf("거리는 %f입니다.\n", dist); return 0;}
+점의좌표를입력하시오(x y): 10 10점의좌표를입력하시오(x y): 20 20거리는14.142136입니다.
+중간점검1. 구조체안에선언된각각의변수들을______이라고한다.2. 구조체의선언에사용하는키워드는_______이다.3. 구조체의태그는왜필요하며, 태그를사용하는경우과사용하지않은경우가어떻게다른가?4. 구조체의선언만으로변수가만들어지는가?5. 구조체의멤버를참조하는연산자는무엇인가?
+
+구조체를멤버로가지는구조체struct date {       int year; int month; int day;};struct student {  // 구조체선언  int number;  char name[10];  struct date dob;     // 구조체안에구조체포함  double grade;};struct  student s1; // 구조체변수선언s1.dob.year = 1983;  // 멤버참조s1.dob.month = 03;s1.dob.day = 29;
+Lab: 사각형을point 구조체로나타내기l꼭지점의좌표를표시하는데앞의예제의point 구조체를사용하자.
+왼쪽상단의좌표를입력하시오: 10 10오른쪽상단의좌표를입력하시오: 20 20면적은100이고둘레는40입니다.
+예제#include <stdio.h>struct point { int x; int y;};struct rect { struct point p1; struct point p2;};int main(void){ struct rect r; int w, h, area, peri;p1(x,y)p2(x,y)
+예제 printf("왼쪽 상단의 좌표를 입력하시오: "); scanf("%d %d", &r.p1.x, &r.p1.y); printf("오른쪽 상단의 좌표를 입력하시오: "); scanf("%d %d", &r.p2.x, &r.p2.y); w = r.p2.x - r.p1.x; h = r.p2.x - r.p1.x; area = w * h; peri = 2 * w + 2 * h; printf("면적은 %d이고 둘레는 %d입니다.\n", area, peri);  return 0;}p1(x,y)p2(x,y)
+왼쪽상단의좌표를입력하시오: 1 1오른쪽상단의좌표를입력하시오: 6 6면적은25이고둘레는20입니다.
+구조체변수의대입과비교l같은구조체변수까리대입은가능하지만비교는불가능하다.
+
+예제l같은구조체변수까리대입은가능하지만비교는불가능하다.struct point { int x; int y;};int main(void){ struct point p1 = {10, 20}; struct point p2 = {30, 40}; p2 = p1;   // 대입가능if( p1 == p2 )   // 비교-> 컴파일 오류!!  printf("p1와 p2이 같습니다.") if( (p1.x == p2.x) && (p1.y == p2.y) ) // 올바른비교 printf("p1와 p2이 같습니다.")}
+중간점검1. 구조체의변수끼리허용되는연산에는어떤것들이있는가?2. 구조체태그와구조체변수의차이점은무엇인가?3. 구조체멤버로구조체를넣을수있는가?4. 구조체는배열을멤버로가질수있는가?
+
+구조체배열l구조체를여러개모은것
+
+구조체배열struct student { int number; char name[20]; double grade;}; int main(void){ struct student list[100]; // 구조체의배열선언list[2].number = 24; strcpy(list[2].name, "홍길동"); list[2].grade = 4.3;}
+구조체배열의 초기화struct student list[3] = { { 1, "Park", 3.42 }, { 2, "Kim", 4.31 }, { 3, "Lee", 2.98 }};
+구조체배열의요소개수자동계산l구조체배열에서요소의개수를자동으로알아내려면배열에서학습한대로하면된다. 즉전체배열의총바이트수를개별요소의바이트수로나누면된다. ln = sizeof(list)/sizeof(list[0]);l또는ln = sizeof(list)/sizeof(struct student);같은함수안에서만가능합니다. 
+
+예제#define SIZE 3struct student { int number; char name[20]; double grade;}; int main(void){ struct student list[SIZE]; int i;
+예제 for(i = 0; i < SIZE; i++) {  printf("학번을 입력하시오: ");  scanf("%d", &list[i].number);  printf("이름을 입력하시오: ");  scanf("%s", list[i].name);  printf("학점을 입력하시오(실수): ");  scanf("%lf", &list[i].grade); } for(i = 0; i< SIZE; i++)        printf("학번: %d, 이름: %s,  학점: %f\n", list[i].number, list[i].name, list[i].grade); return 0;}
+학번을입력하시오: 20190001이름을입력하시오: 홍길동학점을입력하시오(실수): 4.3학번을입력하시오: 20190002이름을입력하시오: 김유신학점을입력하시오(실수): 3.92학번을입력하시오: 20190003이름을입력하시오: 이성계학점을입력하시오(실수): 2.87이름: 홍길동, 학점: 4.300000이름: 김유신, 학점: 3.920000이름: 이성계, 학점: 2.870000
+중간점검1. 상품5개의정보를저장할수있는구조체의배열을정의해보라. 상품은번호와이름, 가격을멤버로가진다.
+
+구조체와포인터1.구조체를가리키는포인터2.포인터를멤버로가지는구조체spgradenamenumber
+구조체를가리키는포인터struct student *p;struct student s = { 24, “Kim”, 4.3 };struct student *p;p = &s;printf("학번=%d 이름=%s 학점=%f \n", s.number, s.name, s.grade);printf("학번=%d 이름=%s 학점=%f \n", (*p).number,(*p).name,(*p).grade);
+
+-> 연산자l-> 연산자는구조체포인터로구조체멤버를참조할때사용struct student *p;struct student s = { 24, “Kim”, 4.3 };struct student *p;p = &s;printf("학번=%d 이름=%s 키=%f \n", p->number, p->name, p->grade);
+-> 연산자
+
+예제// 포인터를통한구조체참조#include <stdio.h>struct student {    int number;    char name[20];    double grade;};int main(void){    struct student s = { 1, "홍길동", 4.3 };    struct student* p;    p = &s;    printf("학번=%d 이름=%s 학점=%f \n", s.number, s.name, s.grade);    printf("학번=%d 이름=%s 학점=%f \n", (*p).number, (*p).name, (*p).grade);    printf("학번=%d 이름=%s 학점=%f \n", p->number, p->name, p->grade);    return 0;}
+학번=1 이름=홍길동학점=4.300000학번=1 이름=홍길동학점=4.300000학번=1 이름=홍길동학점=4.300000
+포인터를멤버로가지는구조체struct date { int month; int day; int year;};struct student { int number; char name[20]; double grade; struct date *dob;}; 
+포인터를멤버로가지는구조체int main(void){    struct date d = { 3, 20, 2000 };    struct student s = { 1, "Kim", 4.3 };    s.dob = &d;    printf("학번: %d\n", s.number);    printf("이름: %s\n", s.name);    printf("학점: %f\n", s.grade);    printf("생년월일: %d년%d월%d일\n", s.dob->year, s.dob->month, s.dob->day);    return 0;}
+학번: 1이름: Kim학점: 4.300000생년월일: 2000년3월20일
+포인터를멤버로가지는구조체
+
+구조체와함수l구조체를함수의인수로전달하는경우l구조체의복사본이함수로전달되게된다. l만약구조체의크기가크면그만큼시간과메모리가소요된다.
+
+구조체와함수l구조체의포인터를함수의인수로전달하는경우l시간과공간을절약할수있다.l원본훼손의가능성이있다.
+
+포인터를통한변경금지l원본을읽기만하고수정할필요는없는경우, 매개변수를정의할때다음과같이const 키워드를써주면된다
+
+구조체를반환하는경우l복사본이반환된다.
+
+Lab: 벡터연산l두벡터의합을구하는함수get_vector_sum()를제작하여보자. 이함수는두개의벡터를인수로받아서덧셈을하고덧셈의결과로생성된벡터를반환한다.
+벡터의합은(7.000000, 9.000000)입니다.
+예제#include <stdio.h>struct vector { double x; double y;};struct vector get_vector_sum(struct vector a, struct vector b);int main(void){ struct vector a = { 2.0, 3.0 }; struct vector b = { 5.0, 6.0 }; struct vector sum; sum = get_vector_sum(a, b); printf("벡터의 합은 (%f, %f)입니다.\n", sum.x, sum.y);  return 0;}
+예제struct vector get_vector_sum(struct vector a, struct vector b){ struct vector result; result.x = a.x + b.x; result.y = a.y + b.y; return result;}
+벡터의합은(7.000000, 9.000000)입니다.
+중간점검1.구조체를함수의인수로전달하면원본이전달되는가? 아니면복사본이전달되는가?2.원본구조체를포인터로함수에전달하는경우, 원본구조체를훼손하지않게하려면어떻게하면되는가? 
+
+공용체l공용체(union)l같은메모리영역을여러개의변수가공유l공용체를선언하고사용하는방법은구조체와아주비슷union example { char c; // 같은공간공유int i;  // 같은공간공유};
+
+예제#include <stdio.h>union example { int i; char c;};int main(void){ union example v; v.c = 'A'; printf("v.c:%c   v.i:%i\n", v.c, v.i ); v.i = 10000; printf("v.c:%c   v.i:%i\n", v.c, v.i);}공용체선언공용체변수선언.char 형으로참조.int 형으로참조.
+v.c:A v.i:-858993599v.c:† v.i:10000
+구조체와공용체의차이점
+
+공용체에타입필드사용#include<stdio.h>#include<string.h>#defineSTU_NUMBER 1#defineREG_NUMBER 2structstudent { inttype; union{  intstu_number;// 학번  charreg_number[15];// 주민등록번호 } id; charname[20];};
+공용체에타입필드사용void print(struct student s){ switch(s.type) {  case STU_NUMBER:   printf("학번%d\n", s.id.stu_number);   printf("이름: %s\n", s.name);   break;  case REG_NUMBER:   printf("주민등록번호: %s\n", s.id.reg_number);   printf("이름: %s\n", s.name);   break;  default:   printf("타입오류\n");   break; }}
+공용체에타입필드사용int main(void){ struct student s1, s2; s1.type = STU_NUMBER; s1.id.stu_number = 20190001; strcpy(s1.name, "홍길동"); s2.type = REG_NUMBER; strcpy(s2.id.reg_number, "860101-1056076"); strcpy(s2.name, "김철수"); print(s1); print(s2);}
+학번: 20190001이름: 홍길동주민등록번호: 860101-1056076이름: 김철수
+중간점검1.공용체의선언에사용하는키워드는_______이다.2.공용체에할당되는메모리의크기는어떻게결정되는가?
+
+열거형l열거형(enumeration)이란변수가가질수있는값들을미리열거해놓은자료형l(예) 요일을저장하고있는변수는{ 일요일, 월요일, 화요일, 수요일, 목요일, 금요일, 토요일} 중의하나의값만가질수있다. 
+
+열거형의선언
+enum   days today;    today = SUN; // OK!열거형 변수선언
+
+열거형이필요한이유l다음과같이프로그램을작성할수있다. 문제점을생각해보자. lint today;ltoday = 0; // 일요일ltoday = 1; // 월요일l열거형을사용하면l오류를줄이고가독성을높일수있다. l0보다는SUN라는기호상수가더바람직하다. 의미를쉽게알수있기때문이다. ltoday에9와같은의미없는값이대입되지않도록미리차단하는것도필요하다. 
+열거형초기화enumdays { SUN, MON, TUE, WED, THU, FRI, SAT };// SUN=0, MON=1, ...enumdays { SUN=1, MON, TUE, WED, THU, FRI, SAT };// SUN=1, MON=2, ...enumdays { SUN=7, MON=1, TUE, WED, THU, FRI, SAT=6 };// SUN=7, MON=1, ...값을지정하기않으면0부터할당
+열거형의예enum colors { white, red, blue, green, black };enum boolean { false, true };enum levels { low, medium, high };enum car_types { sedan, suv, sports_car, van, pickup, convertible };
+예제#include<stdio.h>enumdays { SUN, MON, TUE, WED, THU, FRI, SAT };char*days_name[] = { "sunday", "monday", "tuesday", "wednesday", "thursday", "friday","saturday"};intmain(void){enumdays d;d = WED;printf("%d번째요일은%s입니다\n", d, days_name[d]);return0;}
+3번째요일은wednesday입니다
+열거형과다른방법과의비교정수사용기호상수열거형switch(code) {   case 1:    printf("LCD TV\n");    break;  case 2:    printf(“OLEDTV\n");    break;}#define LCD 1#define OLED 2switch(code) {   case LCD:    printf("LCD TV\n");    break;  case OLED:    printf(“OLED TV\n");    break;}enum tvtype { LCD, OLED };enum tvtype code;switch(code) {   case LCD:    printf("LCD TV\n");    break;  case PDP:    printf(“OLED TV\n");    break;}컴퓨터는알기쉬우나사람은기억하기어렵다.기호상수를작성할때오류를저지를수있다. 컴파일러가중복이일어나지않도록체크한다. 
+중간점검1. 열거형의선언에사용하는키워드는_______이다.2. 열거형은어떤경우에사용되는가?3. 열거형에서특별히값을지정하지않으면자동으로정수상수값이할당되는가?
+
+typedef의개념
+
+typedef 
+
+typedef의예typedef   unsiged char   BYTE;BYTE index;  // unsigned int index;와같다. typedef    int    INT32;typedef    unsigned int     UINT32; INT32 i;   // int i;와같다.UINT32 k;  // unsigned int k;와같다.
+structpoint {intx;inty;};typedef struct point POINT;POINT a, b;구조체로새로운타입정의l구조체로 새로운타입을정의할수있다. 
+typedefstructcomplex {doublereal;doubleimag;} COMPLEX;COMPLEX x, y;
+Lab: 2차원공간상의점을POINT 타입으로정의l2차원공간에서의점을구조체로표현한다음에이구조체를typedef을이용하여새로운타입인POINT로정의한다
+(2, 3)+(10, 10)->(12, 13)
+예제#include <stdio.h>typedef struct point { int x; int y;} POINT;POINT translate(POINT p, POINT delta);int main(void){ POINT p = { 2, 3 }; POINT delta = { 10, 10 }; POINT result; result = translate(p, delta);      printf("(%d, %d)+(%d, %d)->(%d, %d)\n", p.x, p.y, delta.x, delta.y, result.x, result.y); return 0;}
+예제POINT translate(POINT p, POINT delta){ POINT new_p;  new_p.x = p.x + delta.x; new_p.y = p.y + delta.y;  return new_p;}
+새로운점의좌표는(12, 13)입니다.
+typedef과#define 비교l이식성을높여준다.l코드를컴퓨터하드웨어에독립적으로만들수있다l(예) int형은2바이트이기도하고4바이트,  int형대신에typedef을이용한INT32나INT16을사용하게되면확실하게2바이트인지4바이트인지를지정할수있다.l#define을이용해도typedef과비슷한효과를낼수있다. 즉다음과같이INT32를정의할수있다.l#define UINT32 unsigned intltypedef float VECTOR[2];// #define으로는불가능하다. l문서화의역할도한다.ltypedef을사용하게되면주석을붙이는것과같은효과
+중간점검1. typedef의용도는무엇인가?2. typedef의장점은무엇인가?3. 사원을나타내는구조체를정의하고이것을typedef을사용하여서employee라는새로운타입으로정의하여보자. 
+
+MiniProject: 4지선다퀴즈프로그램l여러개의4지선다형문제를저장하고있다가사용자에게출력하고사용자로부터입력을받아서정답여부를출력해주는프로그램을작성해보자. 문제와항목, 정답은구조체에저장할수있다. 문제가여러개이므로구조체의배열을사용한다. 
+1. 파이썬2. Java 3. C 4. Javascript위의언어중에서임베디드장치에가장적합한프로그래밍언어는?  3맞았습니다. ...
+소스struct QUESTION { char question[SIZE]; char item1[SIZE]; char item2[SIZE]; char item3[SIZE]; char item4[SIZE]; int solution;};
+소스#include<stdio.h>#include<stdlib.h>#define SIZE 100struct QUESTION { char question[SIZE]; char item1[SIZE]; char item2[SIZE]; char item3[SIZE]; char item4[SIZE]; int solution;};struct QUESTION bank[100] = {{"임베디드장치에가장적합한프로그래밍언어는?", "1. Python", "2. Java",  "3. C",  "4. Javascript", 3 },{"서로다른자료형을모을수있는구조는?", "1. 배열", "2. 변수",  "3. 구조체",  "4. 포인터", 3 },};
+소스int main(void){ int select, i;for(i = 0; i < 2; i++) {  printf("%s\n", bank[i].question);  printf("%s   ", bank[i].item1);  printf("%s   ", bank[i].item2);  printf("%s   ", bank[i].item3);  printf("%s   ", bank[i].item4);  scanf("%d", &select);  if (select == bank[i].solution)   printf("맞았습니다.\n\n");  else   printf("틀렸습니다.\n\n");} return 0;}
+도전문제1.문제를10 문제정도추가해보라. 2.위의프로그램에서전체문제중에서몇문제를맞추었는지를표시하는기능을추가하라. 3.문제가랜덤하게제시되도록프로그램을수정해보자. 한번제시한문제가다시나오면안된다.
+Q & A
