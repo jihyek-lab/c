@@ -22,18 +22,24 @@ int main(void)
     int current = 0;
     int max = 0;
 
+    // 난수 시드 설정 (실행마다 다른 배열 생성)
     srand((unsigned int)time(NULL));
 
+    // 1) 0/1 배열 생성
     for (i = 0; i < N; i++) {
         a[i] = rand() % 2;
     }
 
+    // 2) 생성된 배열 출력
     printf("array: ");
     for (i = 0; i < N; i++) {
         printf("%d ", a[i]);
     }
     printf("\n");
 
+    // 3) 배열 한 번 순회하며 최장 연속 1 길이 계산
+    // current: 현재 연속된 1의 길이
+    // max: 지금까지 발견된 최대 연속 길이
     for (i = 0; i < N; i++) {
         if (a[i] == 1) {
             current++;
@@ -43,6 +49,7 @@ int main(void)
         }
     }
 
+    // 4) 결과 출력
     printf("longest run of 1s = %d\n", max);
     return 0;
 }
