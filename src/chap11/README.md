@@ -20,6 +20,9 @@
 14. `practice14_rank_without_sort.c`
 15. `practice15_symmetric_array.c`
 16. `practice16_row_col_sum.c`
+17. `practice17_balance_index.c`
+18. `practice18_peak_count.c`
+19. `practice19_max_2x2_sum.c`
 
 ## 컴파일 예시
 ```bash
@@ -28,6 +31,8 @@ cc src/chap11/practice03_find_min_max.c -o /tmp/p03 && /tmp/p03
 cc src/chap11/practice06_rotate_right.c -o /tmp/p06 && /tmp/p06
 cc src/chap11/practice07_sort_and_rank.c -o /tmp/p07 && /tmp/p07
 cc src/chap11/practice14_rank_without_sort.c -o /tmp/p14 && /tmp/p14
+cc src/chap11/practice17_balance_index.c -o /tmp/p17 && /tmp/p17
+cc src/chap11/practice19_max_2x2_sum.c -o /tmp/p19 && /tmp/p19
 ```
 
 ## 학습 포인트
@@ -39,3 +44,4 @@ cc src/chap11/practice14_rank_without_sort.c -o /tmp/p14 && /tmp/p14
 - 정렬을 이용해 데이터를 순위 형태로 재구성하기
 - 배열 순회와 조건 비교를 이용한 알고리즘 문제 풀기
 - 2차원 배열의 행/열 단위 계산하기
+- 여러 후보 구간 중 최적 위치 찾기
